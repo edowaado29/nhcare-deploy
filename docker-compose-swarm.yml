@@ -47,11 +47,12 @@ services:
       restart_policy:
         condition: on-failure
 
-networks:
-  app-network:
-    driver: overlay
-
 volumes:
   app-data:
   db-data:
   nginx-conf:
+
+networks:
+  app-network:
+    driver: overlay
+
