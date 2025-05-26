@@ -28,12 +28,13 @@ class ExampleTest extends TestCase
     {
         // Buat user dummy
         $user = User::factory()->create([
+            'id_user' => 1,
             'email' => 'nhcoree@gmail.com',
             'password' => Hash::make('asdasdasd'),  // password terenkripsi
         ]);
 
         // Kirim POST request login
-        $response = $this->post('/login', [
+        $response = $this->post('/loginUser', [
             'email' => 'nhcoree@gmail.com',
             'passwordd' => 'asdasdasd',
         ]);
@@ -49,17 +50,18 @@ class ExampleTest extends TestCase
     public function test_login_with_invalid_password()
     {
         $user = User::factory()->create([
+            'id_user' => 1,
             'email' => 'nhcoree@gmail.com',
             'password' => Hash::make('asdasdasd'),
         ]);
 
-        $response = $this->from('/login')->post('/login', [
+        $response = $this->from('/loginUser')->post('/loginUser', [
             'email' => 'nhcoree@gmail.com',
             'passwordd' => 'aaasssddd',
         ]);
 
         // Pastikan kembali ke halaman login
-        $response->assertRedirect('/login');
+        $response->assertRedirect('/loginUser');
 
         // Pastikan session berisi pesan error login gagal
         $response->assertSessionHas('fail', 'Email atau password salah!');
