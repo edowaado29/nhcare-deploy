@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: edowaado/laravelapp:latest
+    image: laravelapp
     deploy:
       replicas: 1
       restart_policy:
