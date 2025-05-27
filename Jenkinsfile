@@ -4,31 +4,39 @@ pipeline {
     environment {
         APP_ENV = "local"
         DB_CONNECTION = "mysql"
-        DB_HOST = "db"
-        DB_PORT = "3306"
         DB_DATABASE = "laravel"
         DB_USERNAME = "laravel"
         DB_PASSWORD = "secret"
     }
 
     stages {
-        stage('Clone Repo') {
+        stage('Checkout Code') {
             steps {
-                git url: 'https://github.com/edowaado29/nhcare-deploy.git', branch: 'main'
+                git url: 'https://github.com/edowaado29/nhcare-deploy.git'
             }
         }
 
-        stage('Prepare Environment') {
+        stage('Install Dependencies') {
+            steps {
+                sh 'composer install --no-interaction --prefer-dist'
+            }
+        }
+
+        stage('Copy .env') {
             steps {
                 sh 'cp .env.example .env'
-                sh 'composer install'
+            }
+        }
+
+        stage('Generate App Key') {
+            steps {
                 sh 'php artisan key:generate'
             }
         }
 
-        stage('Migrate Database') {
+        stage('Run Migrations') {
             steps {
-                sh 'php artisan migrate --force'
+                sh 'php artisan migrate'
             }
         }
 
@@ -36,21 +44,6 @@ pipeline {
             steps {
                 sh 'php artisan test'
             }
-        }
-
-        stage('Build & Deploy') {
-            steps {
-                echo 'Deploy...'
-            }
-        }
-    }
-
-    post {
-        success {
-            echo '✅ Build & test success!'
-        }
-        failure {
-            echo '❌ Build failed!'
         }
     }
 }
