@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -16,37 +15,30 @@ class ExampleTest extends TestCase
 
     use RefreshDatabase;
 
-    // Test halaman login bisa diakses
     public function test_login_page_is_accessible()
     {
         $response = $this->get('/login');
         $response->assertStatus(200);
     }
 
-    // Test login dengan kredensial valid
     public function test_login_with_valid_credentials()
     {
-        // Buat user dummy
         $user = User::factory()->create([
             'id_user' => 1,
             'email' => 'nhcoree@gmail.com',
-            'password' => Hash::make('asdasdasd'),  // password terenkripsi
+            'password' => Hash::make('asdasdasd'),
         ]);
 
-        // Kirim POST request login
         $response = $this->post('/loginUser', [
             'email' => 'nhcoree@gmail.com',
             'passwordd' => 'asdasdasd',
         ]);
 
-        // Pastikan redirect ke dashboard
         $response->assertRedirect('dashboard');
 
-        // Pastikan session menyimpan loginId (sesuaikan dengan session yang dipakai)
         $response->assertSessionHas('loginId', $user->id_user);
     }
 
-    // Test login dengan password salah
     public function test_login_with_invalid_password()
     {
         $user = User::factory()->create([
@@ -60,10 +52,8 @@ class ExampleTest extends TestCase
             'passwordd' => 'aaasssddd',
         ]);
 
-        // Pastikan kembali ke halaman login
         $response->assertRedirect('/loginUser');
 
-        // Pastikan session berisi pesan error login gagal
         $response->assertSessionHas('fail', 'Email atau password salah!');
     }
 }
